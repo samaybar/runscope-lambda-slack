@@ -30,26 +30,26 @@ exports.handler = async (event) => {
   //deconstruct variables
   const {bucket_name, test_name, test_url, test_run_url, result, environment_name, region, region_name, requests, variables, agent, agent_expired} = webhookData;
 
-  //allow alternate test name under custom_name test variable
+  //allow alternate test name under custom_name test variable and custom message under custom_message test variable
   let my_test_name = test_name;
-  if (variables.custom_name) {
-      my_test_name = variables.custom_name;
-  }
-  
-  //allow custom message under custom_message test variable
   let my_custom_message = "";
   let isCustomMessage = false;
   let extraSlackMessage = {};
-  if (variables.custom_message) {
-    my_custom_message = variables.custom_message;
-    isCustomMessage = true;
-    extraSlackMessage = {
-      "title": "Message",
-      "value": my_custom_message,
-      "short": true
-    };
+  if(variables){
+    if (variables.custom_name) {
+        my_test_name = variables.custom_name;
+    }
+  
+    if (variables.custom_message) {
+      my_custom_message = variables.custom_message;
+      isCustomMessage = true;
+      extraSlackMessage = {
+        "title": "Message",
+        "value": my_custom_message,
+        "short": true
+      };
+    }
   }
-
   //define variables for display
   let totalResponseTime = 0;
   let assertionsTotal = 0;
