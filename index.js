@@ -28,7 +28,7 @@ exports.handler = async (event) => {
 
      
   //deconstruct variables
-  const {bucket_name, test_name, test_url, test_run_url, result, environment_name, region, region_name, requests, variables, agent_expired} = webhookData;
+  const {bucket_name, test_name, test_url, test_run_url, result, environment_name, region, region_name, requests, variables, agent, agent_expired} = webhookData;
 
   //allow alternate test name under custom_name test variable
   let my_test_name = test_name;
@@ -58,7 +58,13 @@ exports.handler = async (event) => {
   let scriptsPassed = 0;
   let requestCount = requests.length;
   let thisResult = result;
-  let region_name_string = region_name.split(" - ",1);
+  let location;
+  if (region) {
+    let region_name_string = region_name.split(" - ",1);
+    location = `${region.toUpperCase()}: ${region_name_string}`;
+  } else {
+    location = agent;
+  }
   for (let i=0; i<requests.length; i++) {
     assertionsTotal += requests[i].assertions.total;
     assertionsPassed += requests[i].assertions.pass;
@@ -86,11 +92,11 @@ exports.handler = async (event) => {
 
   //create payload for slack message
   let html_message = `API test run completed. <${test_run_url}|View Result> - <${test_url}|Edit Test>`;
-  let plain_text_message = `${bucket_name}: ${test_name} test run ${result} in ${region_name_string}. ${requests.length} executed, ${assertionsPassed} of ${assertionsTotal} assertions passed.`;
+  let plain_text_message = `${bucket_name}: ${my_test_name} test run ${result} in ${location}. ${requests.length} executed, ${assertionsPassed} of ${assertionsTotal} assertions passed.`;
 
   let slackdata =  [
     {
-      "title": `${bucket_name}: ${test_name}`,
+      "title": `${bucket_name}: ${my_test_name}`,
       "title_link": test_url,
       "pretext": html_message,
       "fallback": plain_text_message,
@@ -118,7 +124,7 @@ exports.handler = async (event) => {
         },
         {
             "title": "Location",
-            "value": `${region.toUpperCase()}: ${region_name_string}`,
+            "value": location,
             "short": true
         },
         {
