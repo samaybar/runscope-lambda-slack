@@ -72,20 +72,15 @@ exports.handler = async (event) => {
     scriptsPassed += requests[i]["scripts"].pass;
     totalResponseTime += requests[i].response_time_ms;
   }
-
-  let thisIcon = "https://www.runscope.com/static/img/press/logoicon-runscope-color.png";
-  const failIcon = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Antu_task-reject.svg/200px-Antu_task-reject.svg.png";
-  const passIcon = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Antu_vcs-normal.svg/200px-Antu_vcs-normal.svg.png";
+  
   let blue = "#0000ff";
   let red = "#ff0000";
   let green = "#2ecc71";
   let fontColor = blue;
   if (result == "pass") {
-    thisIcon = passIcon;
     thisResult = "Passed";
     fontColor = green;
   } else if (result == "fail") {
-    thisIcon = failIcon;
     thisResult = "Failed";
     fontColor = red;
   }
